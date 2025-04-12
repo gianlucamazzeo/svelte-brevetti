@@ -1,7 +1,7 @@
 # Svelte Brevetti Frontend
 
 <p align="center">
-  <img src="static/logo.png" alt="Svelte Brevetti Logo" width="200"/>
+ <img src="https://svelte.dev/svelte-logo.svg" alt="Svelte Brevetti Logo" width="200"/>
   <br>
   <a href="https://svelte.dev">
     <img src="https://img.shields.io/badge/Svelte-v4.0.0-ff3e00.svg?style=flat-square" alt="Svelte">
@@ -98,39 +98,39 @@ svelte-brevetti/
 
 Questo frontend è progettato per lavorare con il backend [nest-brevetti](https://github.com/tuo-username/nest-brevetti). Assicurati di avere il backend in esecuzione prima di utilizzare questa applicazione.
 
-## 📝 Esercizi da completare
+## 📝  Da completare
 
-### Esercizio 1: Definizione Tipi e Strutture Dati
+### 1: Definizione Tipi e Strutture Dati
 - Crea un file `types.ts` con le interfacce necessarie per i brevetti
 - Definisci un enum per i possibili stati di un brevetto
 - Crea un tipo per le notifiche di scadenza
 
-### Esercizio 2: Componente Header e Navigazione
+### 2: Componente Header e Navigazione
 - Crea un componente `Header.svelte` con il logo e la navigazione principale
 - Implementa un menu di navigazione con link alle sezioni principali
 - Aggiungi un indicatore per le notifiche non lette
 
-### Esercizio 3: Dashboard
+### 3: Dashboard
 - Implementa la pagina dashboard con statistiche di base
 - Crea un componente per mostrare i brevetti in scadenza nei prossimi 30 giorni
 - Aggiungi un grafico che mostra i brevetti per stato
 
-### Esercizio 4: Lista Brevetti
+### 4: Lista Brevetti
 - Crea un componente `BrevettoCarta.svelte` per visualizzare i dati essenziali di un brevetto
 - Implementa la pagina che mostra tutti i brevetti con paginazione
 - Aggiungi filtri per stato, titolare e data di deposito
 
-### Esercizio 5: Store e Gestione Stato
+### 5: Store e Gestione Stato
 - Crea uno store Svelte per gestire i dati dei brevetti
 - Implementa funzioni per filtrare e ordinare i brevetti
 - Aggiungi persistenza locale con localStorage
 
-### Esercizio 6: Pagina Dettaglio Brevetto
+### 6: Pagina Dettaglio Brevetto
 - Crea una pagina dettaglio che mostra tutte le informazioni di un brevetto
 - Aggiungi una timeline che mostra la storia del brevetto
 - Implementa la funzionalità per aggiungere note a un brevetto
 
-### Esercizio 7: Sistema di Notifiche
+### 7: Sistema di Notifiche
 - Crea un componente `Notifiche.svelte` per visualizzare le notifiche
 - Implementa uno store per gestire le notifiche
 - Aggiungi un sistema per marcare le notifiche come lette
