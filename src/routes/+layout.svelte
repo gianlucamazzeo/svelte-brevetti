@@ -71,21 +71,15 @@
 {/if}
 
 <div class="flex min-h-screen flex-col bg-gray-50">
-	{#if !isAuthRoute}
-		<Header />
-	{/if}
-	
 
 	<main class="flex-grow">
 		{@render children()}
 	</main>
-	{#if !isAuthRoute}
-	<footer class="border-t bg-white py-4">
-		<div class="container mx-auto px-4 text-center text-sm text-gray-500">
-			<p>© {new Date().getFullYear()} UfficioBrevetti - Tutti i diritti riservati</p>
-		</div>
-	</footer>
-{/if}
+		<footer class="border-t bg-white py-4">
+			<div class="container mx-auto px-4 text-center text-sm text-gray-500">
+				<p>© {new Date().getFullYear()} UfficioBrevetti - Tutti i diritti riservati</p>
+			</div>
+		</footer>
 </div>
 
 <style>
