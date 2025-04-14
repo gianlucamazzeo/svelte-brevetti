@@ -10,7 +10,7 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		 "format": "prettier --write \"src/**/*.{js,ts,svelte}\"",
+		"format": "prettier --write \"src/**/*.{js,ts,svelte}\"",
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run"
@@ -26,6 +26,7 @@
 		"@tailwindcss/vite": "^4.1.3",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.4",
+		"@types/node": "^22.14.1",
 		"autoprefixer": "^10.4.21",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
