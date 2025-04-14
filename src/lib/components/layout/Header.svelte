@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { auth, isAdmin } from '$lib/stores/auth';
+	import { auth } from '$lib/stores/auth';
 	import { notifiche, contaNonLette, haNotificheNonLette } from '$lib/stores/notifiche';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
@@ -78,7 +78,7 @@
 			<a href="/scadenze" class="rounded px-2 py-1 text-gray-700 transition hover:text-blue-600">
 				Scadenze
 			</a>
-			{#if $isAdmin}
+			{#if $auth.user?.ruolo === 'ADMIN'}
 				<a href="/titolari" class="rounded px-2 py-1 text-gray-700 transition hover:text-blue-600">
 					Titolari
 				</a>
@@ -260,7 +260,7 @@
 							Profilo
 						</a>
 
-						{#if $isAdmin}
+						{#if $auth.user?.ruolo === 'ADMIN'}
 							<a
 								href="/amministrazione"
 								class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
