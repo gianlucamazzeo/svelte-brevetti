@@ -17,7 +17,7 @@
   </a>
 </p>
 
-Frontend dell'applicazione UfficioBrevetti, sviluppato con [Svelte](https://svelte.dev) e TypeScript. L'applicazione si connette al [backend NestJS](https://github.com/tuo-username/nest-brevetti) per offrire un'interfaccia utente completa per la gestione di brevetti, marchi e design industriali.
+Frontend dell'applicazione UfficioBrevetti, sviluppato con [Svelte](https://svelte.dev) e TypeScript. L'applicazione si connette al [backend NestJS](https://github.com/gianlucamazzeo/nest-brevetti) per offrire un'interfaccia utente completa per la gestione di brevetti, marchi e design industriali.
 
 ## 🚀 Caratteristiche
 
