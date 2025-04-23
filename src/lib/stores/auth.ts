@@ -2,6 +2,7 @@ import { writable, type Writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import { AUTH_COOKIE_NAME, API_BASE_URL } from '$lib/config/env';
 import { authApiLogger, authLogger } from '$lib/utils/auth-loggers';
+import { goto } from '$app/navigation';
 
 interface User {
 	id: string;
@@ -256,7 +257,9 @@ const createAuthStore = () => {
 					loading: false,
 					error: null,
 				});
-
+				if (browser) {
+					window.location.href = '/';
+				}
 				// Restituisci la risposta elaborata
 				return {
 					success: true,
@@ -317,6 +320,9 @@ const createAuthStore = () => {
 					loading: false,
 					error: null,
 				});
+				if (browser) {
+					goto('/auth/login');
+				}
 			}
 		},
 

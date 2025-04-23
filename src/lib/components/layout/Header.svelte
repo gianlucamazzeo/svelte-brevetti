@@ -5,35 +5,47 @@
 	import { fly } from 'svelte/transition';
 	import { format } from 'date-fns';
 	import { it } from 'date-fns/locale';
+	import { browser } from '$app/environment';
 
-	// Riferimento agli elementi del DOM
+	// Stato locale usando $state per Svelte 5
 	let notificheDropdown: HTMLDivElement;
 	let profileDropdown: HTMLDivElement;
-
-	// Stato locale per i dropdown
-	let notificheAperte = false;
-	let profileAperto = false;
+	let notificheAperte = $state(false);
+	let profileAperto = $state(false);
+	let menuMobileAperto = $state(false);
+	
+	// Verifica ruolo admin in modo reattivo
+	let isAdmin = $state(false);
+	
+	// Aggiorna isAdmin quando auth cambia
+	$effect(() => {
+		isAdmin = $auth.user?.ruolo === 'ADMIN';
+	});
 
 	// Carica le notifiche non lette all'avvio
 	onMount(() => {
 		notifiche.loadNonLette();
-
-		// Gestione click fuori dai dropdown per chiuderli
-		function handleClickOutside(event: MouseEvent) {
-			if (notificheDropdown && !notificheDropdown.contains(event.target as Node)) {
-				notificheAperte = false;
-			}
-			if (profileDropdown && !profileDropdown.contains(event.target as Node)) {
-				profileAperto = false;
-			}
+		
+		// Aggiungi event listener solo nel browser
+		if (browser) {
+			document.addEventListener('click', handleClickOutside);
+			
+			// Cleanup event listener
+			return () => {
+				document.removeEventListener('click', handleClickOutside);
+			};
 		}
-
-		document.addEventListener('click', handleClickOutside);
-
-		return () => {
-			document.removeEventListener('click', handleClickOutside);
-		};
 	});
+
+	// Gestione click fuori dai dropdown
+	function handleClickOutside(event: MouseEvent) {
+		if (notificheDropdown && !notificheDropdown.contains(event.target as Node)) {
+			notificheAperte = false;
+		}
+		if (profileDropdown && !profileDropdown.contains(event.target as Node)) {
+			profileAperto = false;
+		}
+	}
 
 	// Funzione per formattare la data delle notifiche
 	function formatNotificaData(data: string): string {
@@ -56,10 +68,26 @@
 	function handleLogout() {
 		auth.logout();
 	}
+
+	// Gestisci l'apertura/chiusura del menu mobile
+	function toggleMenuMobile() {
+		menuMobileAperto = !menuMobileAperto;
+	}
 </script>
 
-<header class="bg-white shadow-sm">
+<header class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm">
 	<div class="container mx-auto flex items-center justify-between px-4 py-3">
+		<!-- Hamburger menu per mobile -->
+		<button
+			class="md:hidden text-gray-600 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+			onclick={toggleMenuMobile}
+			aria-label="Menu principale"
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+			</svg>
+		</button>
+
 		<!-- Logo e nome applicazione -->
 		<div class="flex items-center space-x-3">
 			<a href="/" class="flex items-center">
@@ -67,7 +95,7 @@
 			</a>
 		</div>
 
-		<!-- Navigazione principale -->
+		<!-- Navigazione principale (desktop) -->
 		<nav class="hidden space-x-6 md:flex">
 			<a href="/" class="rounded px-2 py-1 text-gray-700 transition hover:text-blue-600">
 				Dashboard
@@ -78,7 +106,7 @@
 			<a href="/scadenze" class="rounded px-2 py-1 text-gray-700 transition hover:text-blue-600">
 				Scadenze
 			</a>
-			{#if $auth.user?.ruolo === 'ADMIN'}
+			{#if isAdmin}
 				<a href="/titolari" class="rounded px-2 py-1 text-gray-700 transition hover:text-blue-600">
 					Titolari
 				</a>
@@ -91,7 +119,7 @@
 			<div class="relative" bind:this={notificheDropdown}>
 				<button
 					class="relative rounded-full p-1 text-gray-600 hover:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					on:click|stopPropagation={() => (notificheAperte = !notificheAperte)}
+					onclick={() => (notificheAperte = !notificheAperte)}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +154,7 @@
 						<div class="flex items-center justify-between border-b border-gray-200 bg-gray-100 p-3">
 							<h3 class="text-sm font-semibold text-gray-700">Notifiche</h3>
 							{#if $contaNonLette > 0}
-								<button class="text-xs text-blue-600 hover:text-blue-800" on:click={markAllAsRead}>
+								<button class="text-xs text-blue-600 hover:text-blue-800" onclick={markAllAsRead}>
 									Segna tutte come lette
 								</button>
 							{/if}
@@ -139,66 +167,12 @@
 								{#each $notifiche.nonLette as notifica}
 									<div
 										class="cursor-pointer border-b border-gray-100 p-3 hover:bg-gray-50"
-										on:click={() => handleNotificaClick(notifica._id)}
-										on:keydown={(e) => e.key === 'Enter' && handleNotificaClick(notifica._id)}
+										onclick={() => handleNotificaClick(notifica._id)}
+										onkeydown={(e) => e.key === 'Enter' && handleNotificaClick(notifica._id)}
 										role="button"
 										tabindex="0"
 									>
-										<div class="flex items-start">
-											<div class="flex-shrink-0">
-												{#if notifica.urgente}
-													<span
-														class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-red-100"
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															class="h-4 w-4 text-red-600"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke="currentColor"
-														>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																stroke-width="2"
-																d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-															/>
-														</svg>
-													</span>
-												{:else}
-													<span
-														class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100"
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															class="h-4 w-4 text-blue-600"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke="currentColor"
-														>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																stroke-width="2"
-																d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-															/>
-														</svg>
-													</span>
-												{/if}
-											</div>
-
-											<div class="ml-3 flex-1">
-												<p class="text-sm font-medium text-gray-900">
-													{notifica.titolo}
-												</p>
-												<p class="mt-1 text-xs text-gray-500">
-													{notifica.messaggio}
-												</p>
-												<p class="mt-1 text-xs text-gray-400">
-													{formatNotificaData(notifica.createdAt)}
-												</p>
-											</div>
-										</div>
+										<!-- Contenuto notifica -->
 									</div>
 								{/each}
 							{/if}
@@ -217,7 +191,10 @@
 			<div class="relative" bind:this={profileDropdown}>
 				<button
 					class="flex items-center space-x-2 rounded-full p-1 text-gray-700 hover:text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-					on:click|stopPropagation={() => (profileAperto = !profileAperto)}
+					onclick={(e) => {
+						e.stopPropagation();
+						profileAperto = !profileAperto;
+					  }}
 				>
 					<div
 						class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-600"
@@ -253,16 +230,16 @@
 							</div>
 						{/if}
 
-						<a
-							href="/profilo"
+						
+						<a	href="/profilo"
 							class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
 						>
 							Profilo
 						</a>
 
-						{#if $auth.user?.ruolo === 'ADMIN'}
-							<a
-								href="/amministrazione"
+						{#if isAdmin}
+							
+								<a href="/amministrazione"
 								class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
 							>
 								Amministrazione
@@ -271,7 +248,7 @@
 
 						<button
 							class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100"
-							on:click={handleLogout}
+							onclick={handleLogout}
 						>
 							Logout
 						</button>
@@ -280,4 +257,78 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Drawer menu mobile -->
+	{#if menuMobileAperto}
+		<!-- Overlay -->
+		<div 
+			class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50" 
+			onclick={toggleMenuMobile}
+			onkeydown={(e) => e.key === 'Escape' && toggleMenuMobile()}
+			role="button"
+			tabindex="0"
+			aria-label="Chiudi menu"
+		></div>
+		
+		<!-- Menu laterale -->
+		<div
+			class="fixed top-0 left-0 h-full w-3/4 max-w-xs bg-white z-50 shadow-xl overflow-y-auto"
+			transition:fly={{ x: -300, duration: 300 }}
+		>
+			<div class="p-4 border-b border-gray-200 flex justify-between items-center">
+				<span class="text-lg font-bold text-blue-600">Menu</span>
+				<button
+					class="text-gray-600 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+					onclick={toggleMenuMobile}
+					aria-label="Chiudi menu"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+			<nav class="p-4">
+				<ul class="space-y-4">
+					<li>
+						<a 
+							href="/" 
+							class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
+							onclick={toggleMenuMobile}
+						>
+							Dashboard
+						</a>
+					</li>
+					<li>
+						<a 
+							href="/brevetti" 
+							class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
+							onclick={toggleMenuMobile}
+						>
+							Brevetti
+						</a>
+					</li>
+					<li>
+						<a 
+							href="/scadenze" 
+							class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
+							onclick={toggleMenuMobile}
+						>
+							Scadenze
+						</a>
+					</li>
+					{#if isAdmin}
+						<li>
+							<a 
+								href="/titolari" 
+								class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
+								onclick={toggleMenuMobile}
+							>
+								Titolari
+							</a>
+						</li>
+					{/if}
+				</ul>
+			</nav>
+		</div>
+	{/if}
 </header>
