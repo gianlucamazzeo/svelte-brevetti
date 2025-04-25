@@ -2,6 +2,7 @@
     // Importa eventuali componenti e store necessari
     import { onMount } from 'svelte';
     import Header from '../lib/components/layout/Header.svelte';
+    import SearchBar from '$lib/components/brevetti/SearchBar.svelte';
     
     // Stato per gestire la visualizzazione del menu mobile
     let isMobileMenuOpen = false;
@@ -19,7 +20,7 @@
    <div class="min-h-screen flex flex-col bg-gray-50 pt-16">
     <!-- Header -->
     <Header />
-    
+    <SearchBar  />
     <!-- Contenuto principale -->
     <main class="flex-grow">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
